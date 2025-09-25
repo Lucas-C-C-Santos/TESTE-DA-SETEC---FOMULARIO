@@ -1,4 +1,5 @@
 PONTOS A SE REVEZAR:
 
-# falta o () do telefone e o - entre os números;
-#
+# TELEFONE: falta o () do telefone e o - entre os números;
+# CPF: falta os pontos e o -;
+#NOME COMPLETO: Limite de Caracter de 100;
