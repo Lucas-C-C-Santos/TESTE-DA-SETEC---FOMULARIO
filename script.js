@@ -217,9 +217,18 @@ function initializeInputMasks() {
     })
   })
 
-const phoneInputs = document.querySelectorAll('input[type="tel"]') phoneInputs.forEach((input) => { input.addEventListener("input", (e) => { let value = e.target.value.replace(/\D/g, "") value = value.replace(/(\d{2})(\d)/, "($1) $2") value = value.replace(/(\d)(\\d{4})$/, "$1-$2") e.target.value = value }) }) }
+  // Phone Mask
+  const phoneInputs = document.querySelectorAll('input[type="tel"]')
+  phoneInputs.forEach((input) => {
+    input.addEventListener("input", (e) => {
+      let value = e.target.value.replace(/\D/g, "")
+      value = value.replace(/(\d{2})(\d)/, "($1) $2")
+      value = value.replace(/(\d)(\d{4})$/, "$1-$2")
+      e.target.value = value
+    })
+  })
+}
 
-  
 // City and School Selection
 function initializeCitySchoolSelection() {
   const colegiosPorCidade = {
@@ -492,7 +501,11 @@ document.addEventListener("keydown", (e) => {
 
 console.log("🚀 SETEC 2025 - Formulário carregado com sucesso!")
 
+<<<<<<< HEAD
+=======
 
 
 
 
+
+>>>>>>> e10439391d4530f4440087f21e0ccadf705f74b5
