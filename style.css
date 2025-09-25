@@ -114,6 +114,10 @@
     font-weight: bold;
     font-size: 1rem;
   }
+
+.logo_pequena {
+    width:25%;
+}
   
   .logo-text-section {
     display: flex;
@@ -896,4 +900,5 @@
   }
 
   
+
 
