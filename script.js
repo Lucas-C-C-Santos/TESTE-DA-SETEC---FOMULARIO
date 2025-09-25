@@ -217,17 +217,20 @@ function initializeInputMasks() {
     })
   })
 
-  // Phone Mask
-  const phoneInputs = document.querySelectorAll('input[type="tel"]')
-  phoneInputs.forEach((input) => {
-    input.addEventListener("input", (e) => {
-      let value = e.target.value.replace(/\D/g, "")
-      value = value.replace(/(\d{2})(\d)/, "($1) $2")
-      value = value.replace(/(\d)(\\d{4})$/, "$1-$2")
-      e.target.value = value
-    })
-  })
-}
+const phoneInputs = document.querySelectorAll('input[type="tel"]');
+
+phoneInputs.forEach((input) => {
+  input.addEventListener("input", (e) => {
+    let value = e.target.value.replace(/\D/g, ""); // Remove tudo que não for dígito
+
+    // Aplica a formatação: (99) 99999-9999
+    value = value.replace(/^(\d{2})(\d)/, "($1) $2"); // DDD
+    value = value.replace(/(\d{5})(\d{4})$/, "$1-$2"); // hífen entre os últimos 9 dígitos
+
+    e.target.value = value;
+  });
+});
+
 
 // City and School Selection
 function initializeCitySchoolSelection() {
@@ -500,3 +503,4 @@ document.addEventListener("keydown", (e) => {
 })
 
 console.log("🚀 SETEC 2025 - Formulário carregado com sucesso!")
+
