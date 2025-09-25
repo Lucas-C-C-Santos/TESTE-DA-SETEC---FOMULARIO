@@ -217,11 +217,24 @@ function initializeInputMasks() {
     })
   })
 
+<<<<<<< HEAD
+  // Phone Mask
+ const phoneInputs = document.querySelectorAll('input[type="tel"]')
+phoneInputs.forEach((input) => {
+  input.addEventListener("input", (e) => {
+    let value = e.target.value.replace(/\D/g, "") // Remove tudo que não é número
+    value = value.replace(/(\d{2})(\d)/, "($1) $2") // Adiciona o código de área
+    value = value.replace(/(\d)(\d{4})$/, "$1-$2") // Adiciona o traço entre o prefixo e o número
+    e.target.value = value
+  })
+})
+=======
 
 // Phone Mask
 const handlePhone = (event) => {
   const input = event.target
   input.value = phoneMask(input.value)
+>>>>>>> 4a92532e07749eea5899f3cc8d6110f4ea5769c9
 }
 
 const phoneMask = (value) => {
