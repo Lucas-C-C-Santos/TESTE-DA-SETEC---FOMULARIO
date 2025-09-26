@@ -13,7 +13,7 @@ function initMatrixAnimation() {
 
   // Matrix characters (including some programming symbols)
   const chars =
-    "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン{}[]()<>=+-*/&|!@#$%^"
+    "SETEC2025"
   const charArray = chars.split("")
 
   const fontSize = 14
