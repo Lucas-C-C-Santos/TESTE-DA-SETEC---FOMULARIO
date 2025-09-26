@@ -1,8 +1,62 @@
+function initMatrixAnimation() {
+  const canvas = document.getElementById("matrixCanvas")
+  const ctx = canvas.getContext("2d")
+
+  // Set canvas size
+  function resizeCanvas() {
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+  }
+
+  resizeCanvas()
+  window.addEventListener("resize", resizeCanvas)
+
+  // Matrix characters (including some programming symbols)
+  const chars =
+    "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン{}[]()<>=+-*/&|!@#$%^"
+  const charArray = chars.split("")
+
+  const fontSize = 14
+  const columns = canvas.width / fontSize
+  const drops = []
+
+  // Initialize drops
+  for (let i = 0; i < columns; i++) {
+    drops[i] = 1
+  }
+
+  function draw() {
+    // Semi-transparent black background for trail effect
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)"
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    // Purple text
+    ctx.fillStyle = "#7c3aed"
+    ctx.font = fontSize + "px monospace"
+
+    for (let i = 0; i < drops.length; i++) {
+      const text = charArray[Math.floor(Math.random() * charArray.length)]
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize)
+
+      // Reset drop to top randomly
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0
+      }
+      drops[i]++
+    }
+  }
+
+  // Start animation
+  setInterval(draw, 50)
+}
+
 // Form type switching and initialization
 document.addEventListener("DOMContentLoaded", () => {
   const typeCards = document.querySelectorAll(".type-card")
   const organizadorForm = document.getElementById("organizadorForm")
   const visitanteForm = document.getElementById("visitanteForm")
+
+  initMatrixAnimation()
 
   // Initialize with organizer form
   showForm("organizador")
@@ -31,32 +85,39 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Handle radio button changes for student/teacher
   const radioButtons = document.querySelectorAll('input[name="tipo_usuario"]')
   const studentOnlyFields = document.querySelectorAll(".student-only-field")
 
+  // Initial state check
+  function updateFieldsVisibility() {
+    const selectedValue = document.querySelector('input[name="tipo_usuario"]:checked')?.value
+
+    if (selectedValue === "professor") {
+      // Hide student-only fields and remove required attribute
+      studentOnlyFields.forEach((field) => {
+        field.classList.add("hidden")
+        const inputs = field.querySelectorAll("input, select")
+        inputs.forEach((input) => {
+          input.removeAttribute("required")
+        })
+      })
+    } else {
+      // Show student-only fields and add required attribute
+      studentOnlyFields.forEach((field) => {
+        field.classList.remove("hidden")
+        const inputs = field.querySelectorAll("input, select")
+        inputs.forEach((input) => {
+          input.setAttribute("required", "required")
+        })
+      })
+    }
+  }
+
+  // Set initial state
+  updateFieldsVisibility()
+
   radioButtons.forEach((radio) => {
-    radio.addEventListener("change", function () {
-      if (this.value === "professor") {
-        // Hide student-only fields and remove required attribute
-        studentOnlyFields.forEach((field) => {
-          field.classList.add("hidden")
-          const inputs = field.querySelectorAll("input, select")
-          inputs.forEach((input) => {
-            input.removeAttribute("required")
-          })
-        })
-      } else {
-        // Show student-only fields and add required attribute
-        studentOnlyFields.forEach((field) => {
-          field.classList.remove("hidden")
-          const inputs = field.querySelectorAll("input, select")
-          inputs.forEach((input) => {
-            input.setAttribute("required", "required")
-          })
-        })
-      }
-    })
+    radio.addEventListener("change", updateFieldsVisibility)
   })
 
   // Student form - shows popup first, then submits after confirmation
@@ -195,7 +256,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeMobileMenu()
 })
 
-// Input Masks
 function initializeInputMasks() {
   // CPF Mask
   const cpfInputs = document.querySelectorAll('input[name="cpf_aluno"]')
@@ -217,14 +277,49 @@ function initializeInputMasks() {
     })
   })
 
-  // Phone Mask
   const phoneInputs = document.querySelectorAll('input[type="tel"]')
   phoneInputs.forEach((input) => {
     input.addEventListener("input", (e) => {
       let value = e.target.value.replace(/\D/g, "")
-      value = value.replace(/(\d{2})(\d)/, "($1) $2")
-      value = value.replace(/(\d)(\d{4})$/, "$1-$2")
+
+      // Limit to 11 digits
+      if (value.length > 11) {
+        value = value.slice(0, 11)
+      }
+
+      // Apply mask: (99) 99999-9999
+      if (value.length >= 11) {
+        value = value.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3")
+      } else if (value.length >= 7) {
+        value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3")
+      } else if (value.length >= 3) {
+        value = value.replace(/(\d{2})(\d{0,5})/, "($1) $2")
+      } else if (value.length >= 1) {
+        value = value.replace(/(\d{0,2})/, "($1")
+      }
+
       e.target.value = value
+    })
+
+    // Handle backspace and delete properly
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace" || e.key === "Delete") {
+        setTimeout(() => {
+          let value = e.target.value.replace(/\D/g, "")
+
+          if (value.length >= 11) {
+            value = value.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3")
+          } else if (value.length >= 7) {
+            value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3")
+          } else if (value.length >= 3) {
+            value = value.replace(/(\d{2})(\d{0,5})/, "($1) $2")
+          } else if (value.length >= 1) {
+            value = value.replace(/(\d{0,2})/, "($1")
+          }
+
+          e.target.value = value
+        }, 0)
+      }
     })
   })
 }
@@ -500,12 +595,3 @@ document.addEventListener("keydown", (e) => {
 })
 
 console.log("🚀 SETEC 2025 - Formulário carregado com sucesso!")
-
-<<<<<<< HEAD
-=======
-
-
-
-
-
->>>>>>> e10439391d4530f4440087f21e0ccadf705f74b5
